@@ -451,6 +451,11 @@ public class PersistentDispatcherMultipleConsumers extends AbstractDispatcherMul
         sendMessagesToConsumers(readType, entries);
     }
 
+    /**
+     *  broker 推送消息给 consumer
+     * @param readType
+     * @param entries
+     */
     protected void sendMessagesToConsumers(ReadType readType, List<Entry> entries) {
 
         if (needTrimAckedMessages()) {

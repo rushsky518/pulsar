@@ -185,6 +185,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case MESSAGE: {
+                // consumer 接收消息
                 checkArgument(cmd.hasMessage());
                 handleMessage(cmd.getMessage(), buffer);
                 cmd.getMessage().recycle();
@@ -197,6 +198,7 @@ public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
                 break;
 
             case SEND: {
+                // broker 写入消息
                 checkArgument(cmd.hasSend());
 
                 // Store a buffer marking the content + headers

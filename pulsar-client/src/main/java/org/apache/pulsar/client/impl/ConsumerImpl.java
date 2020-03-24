@@ -906,7 +906,7 @@ public class ConsumerImpl<T> extends ConsumerBase<T> implements ConnectionHandle
                 }
                 if (!pendingReceives.isEmpty()) {
                     notifyPendingReceivedCallback(message, null);
-                } else if (enqueueMessageAndCheckBatchReceive(message)) {
+                } else if (enqueueMessageAndCheckBatchReceive(message)) { // 把消息放入队列
                     if (hasPendingBatchReceive()) {
                         notifyPendingBatchReceivedCallBack();
                     }
@@ -1065,7 +1065,7 @@ public class ConsumerImpl<T> extends ConsumerBase<T> implements ConnectionHandle
                 try {
                     if (!pendingReceives.isEmpty()) {
                         notifyPendingReceivedCallback(message, null);
-                    } else if (enqueueMessageAndCheckBatchReceive(message)) {
+                    } else if (enqueueMessageAndCheckBatchReceive(message)) { // 把消息放入到队列中
                         if (hasPendingBatchReceive()) {
                             notifyPendingBatchReceivedCallBack();
                         }

@@ -92,6 +92,9 @@ import org.apache.pulsar.common.util.collections.ConcurrentLongHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 客户端的业务逻辑
+ */
 public class ClientCnx extends PulsarHandler {
 
     protected final Authentication authentication;
