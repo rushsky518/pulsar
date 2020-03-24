@@ -83,6 +83,12 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class PulsarDecoder extends ChannelInboundHandlerAdapter {
 
+    /**
+     * 请求的处理
+     * @param ctx
+     * @param msg
+     * @throws Exception
+     */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         // Get a buffer that contains the full frame

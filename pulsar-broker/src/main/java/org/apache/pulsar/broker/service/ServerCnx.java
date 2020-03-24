@@ -124,6 +124,9 @@ import org.apache.pulsar.transaction.impl.common.TxnStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 我们需要的业务 handler 就在这了，其实就是要找到 channelRead 方法，根据请求码做对应的动作
+ */
 public class ServerCnx extends PulsarHandler {
     private final BrokerService service;
     private final SchemaRegistryService schemaService;

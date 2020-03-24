@@ -128,7 +128,8 @@ public class ConfigurationCacheService {
     private void createFailureDomainRoot(ZooKeeper zk, String path) {
         try {
             final String clusterZnodePath = Paths.get(path).getParent().toString();
-            if (zk.exists(clusterZnodePath, false) != null && zk.exists(path, false) == null) {
+            String replace = clusterZnodePath.replace("\\", "/");
+            if (zk.exists(replace, false) != null && zk.exists(path, false) == null) {
                 try {
                     byte[] data = "".getBytes();
                     ZkUtils.createFullPathOptimistic(zk, path, data, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
