@@ -128,6 +128,7 @@ public class Namespaces extends NamespacesBase {
             Policies policies) {
         validateNamespaceName(tenant, namespace);
 
+        // 传入的 policies 为空，根据 defaultNumberOfNamespaceBundles 创建 bundle
         policies = getDefaultPolicesIfNull(policies);
         internalCreateNamespace(policies);
     }

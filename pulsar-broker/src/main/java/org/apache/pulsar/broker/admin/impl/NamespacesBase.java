@@ -121,8 +121,8 @@ public abstract class NamespacesBase extends AdminResource {
 
         try {
             policiesCache().invalidate(path(POLICIES, namespaceName.toString()));
-
-            zkCreateOptimistic(path(POLICIES, namespaceName.toString()), jsonMapper().writeValueAsBytes(policies));
+            String path = path(POLICIES, namespaceName.toString());
+            zkCreateOptimistic(path, jsonMapper().writeValueAsBytes(policies));
             log.info("[{}] Created namespace {}", clientAppId(), namespaceName);
         } catch (KeeperException.NodeExistsException e) {
             log.warn("[{}] Failed to create namespace {} - already exists", clientAppId(), namespaceName);

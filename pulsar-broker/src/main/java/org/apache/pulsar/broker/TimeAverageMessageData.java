@@ -88,7 +88,9 @@ public class TimeAverageMessageData {
     public void update(final double newMsgThroughputIn, final double newMsgThroughputOut, final double newMsgRateIn,
             final double newMsgRateOut) {
         // If max samples has been reached, don't increase numSamples.
+        // numSamples 为 10 或者 1000
         numSamples = Math.min(numSamples + 1, maxSamples);
+        // 计算平均值
         msgThroughputIn = getUpdatedValue(msgThroughputIn, newMsgThroughputIn);
         msgThroughputOut = getUpdatedValue(msgThroughputOut, newMsgThroughputOut);
         msgRateIn = getUpdatedValue(msgRateIn, newMsgRateIn);

@@ -12,6 +12,7 @@
  */
 package zhang;
 
+import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -29,8 +30,18 @@ public class ProducerDemo {
                 .topic("my-topic")
                 .create();
 
-// You can then send messages to the broker and topic you specified:
-        producer.send("My message".getBytes());
+        for (int i = 0; i < 100; i++) {
+            // You can then send messages to the broker and topic you specified:
+            MessageId messageId = null;
+                    producer.newMessage()
+                    .key("my-message-key")
+                    .value("my-async-message".getBytes())
+                    .property("my-key", "my-value")
+                    .property("my-other-key", "my-other-value")
+                    .sendAsync();
+            System.out.println("send " + i);
+//            System.out.printf("send %s%n", messageId.toString());
+        }
         producer.close();
         client.close();
     }

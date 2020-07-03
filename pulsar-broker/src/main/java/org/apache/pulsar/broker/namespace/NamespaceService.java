@@ -287,8 +287,10 @@ public class NamespaceService {
             NamespaceBundle nsFullBundle = null;
 
             // all pre-registered namespace is assumed to have bundles disabled
+            // 获取 fullBundle
             nsFullBundle = bundleFactory.getFullBundle(nsname);
             // v2 namespace will always use full bundle object
+            // own fullBundle
             otherUrl = ownershipCache.tryAcquiringOwnership(nsFullBundle).get().getNativeUrl();
 
             if (myUrl.equals(otherUrl)) {
@@ -464,6 +466,7 @@ public class NamespaceService {
                     LOG.debug("Redirecting to broker {} to acquire ownership of bundle {}", candidateBroker, bundle);
                 }
 
+                // 从 zk 中取出其他 broker 的数据，把 broker 的数据返回给
                 // Now setting the redirect url
                 createLookupResult(candidateBroker)
                         .thenAccept(lookupResult -> lookupFuture.complete(Optional.of(lookupResult)))
@@ -546,6 +549,7 @@ public class NamespaceService {
         return Optional.of(lookupAddress);
     }
 
+//    解绑 bundle 的动作发起点在这
     public void unloadNamespaceBundle(NamespaceBundle bundle) throws Exception {
         // unload namespace bundle
         unloadNamespaceBundle(bundle, 5, TimeUnit.MINUTES);
@@ -642,6 +646,7 @@ public class NamespaceService {
      * @return
      * @throws Exception
      */
+//    split 一个 bundle，就是把 bundle 按范围切分
     public CompletableFuture<Void> splitAndOwnBundle(NamespaceBundle bundle, boolean unload, NamespaceBundleSplitAlgorithm splitAlgorithm)
         throws Exception {
 
@@ -662,6 +667,7 @@ public class NamespaceService {
             if (ex == null) {
                 final Pair<NamespaceBundles, List<NamespaceBundle>> splittedBundles;
                 try {
+                    // splitBoundary 是平均值
                     splittedBundles = bundleFactory.splitBundles(bundle,
                         2 /* by default split into 2 */, splitBoundary);
 

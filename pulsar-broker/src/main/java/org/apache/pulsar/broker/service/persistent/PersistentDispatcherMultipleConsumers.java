@@ -604,7 +604,7 @@ public class PersistentDispatcherMultipleConsumers extends AbstractDispatcherMul
     }
 
     /**
-     * returns true only if {@link consumerList} has atleast one unblocked consumer and have available permits
+     * returns true only if has atleast one unblocked consumer and have available permits
      *
      * @return
      */

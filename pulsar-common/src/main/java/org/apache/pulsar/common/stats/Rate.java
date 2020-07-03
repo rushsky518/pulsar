@@ -22,18 +22,19 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.concurrent.atomic.LongAdder;
 
-/**
- */
 public class Rate {
-    // Counters
-    private final LongAdder valueAdder = new LongAdder();
+    // 个数
     private final LongAdder countAdder = new LongAdder();
-
-    // Computed stats
+    // 字节数
+    private final LongAdder valueAdder = new LongAdder();
+    // 累加的个数
     private long count = 0;
+    // countAdder.sum() / period
     private double rate = 0.0d;
+    // valueAdder.sum() / period
     private double valueRate = 0.0d;
     private double averageValue = 0.0d;
+    // 上一次计算的时刻
     private long lastCalculatedTime = System.nanoTime();
 
     public void recordEvent() {
@@ -58,7 +59,7 @@ public class Rate {
 
     public void calculateRate(double period) {
         checkArgument(period > 0, "Invalid period %s to calculate rate", period);
-
+        // 累加获取值，并重置
         count = countAdder.sumThenReset();
         long sum = valueAdder.sumThenReset();
         averageValue = count != 0 ? sum / count : 0.0d;

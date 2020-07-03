@@ -100,6 +100,7 @@ public class LeastLongTermMessageRate implements ModularLoadManagerStrategy {
         // select one of them at the end.
         for (String broker : candidates) {
             final BrokerData brokerData = loadData.getBrokerData().get(broker);
+            // 算出 broker 的分数
             final double score = getScore(brokerData, conf);
             if (score == Double.POSITIVE_INFINITY) {
                 final LocalBrokerData localData = brokerData.getLocalData();

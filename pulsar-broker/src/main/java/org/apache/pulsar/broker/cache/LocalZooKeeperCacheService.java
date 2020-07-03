@@ -70,14 +70,16 @@ public class LocalZooKeeperCacheService {
         this.ownerInfoCache = new ZooKeeperDataCache<NamespaceEphemeralData>(cache) {
             @Override
             public NamespaceEphemeralData deserialize(String path, byte[] content) throws Exception {
-                return ObjectMapperFactory.getThreadLocal().readValue(content, NamespaceEphemeralData.class);
+                NamespaceEphemeralData namespaceEphemeralData = ObjectMapperFactory.getThreadLocal().readValue(content, NamespaceEphemeralData.class);
+                return namespaceEphemeralData;
             }
         };
 
         this.policiesCache = new ZooKeeperDataCache<LocalPolicies>(cache) {
             @Override
             public LocalPolicies deserialize(String path, byte[] content) throws Exception {
-                return ObjectMapperFactory.getThreadLocal().readValue(content, LocalPolicies.class);
+                LocalPolicies localPolicies = ObjectMapperFactory.getThreadLocal().readValue(content, LocalPolicies.class);
+                return localPolicies;
             }
 
             @Override

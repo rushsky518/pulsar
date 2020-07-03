@@ -26,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
  * This algorithm divides the bundle into two parts with the same hash range size.
  */
 public class RangeEquallyDivideBundleSplitAlgorithm implements NamespaceBundleSplitAlgorithm {
-
+    // 就是取个平均值
     @Override
     public CompletableFuture<Long> getSplitBoundary(NamespaceService service, NamespaceBundle bundle) {
         return CompletableFuture.completedFuture(bundle.getLowerEndpoint() +

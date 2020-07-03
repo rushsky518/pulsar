@@ -156,6 +156,7 @@ public class ModularLoadManagerImpl implements ModularLoadManager, ZooKeeperCach
     // Local data for the broker this is running on.
     private LocalBrokerData localData;
 
+//    存放所有 broker 的数据
     // Load data comprising data available for each broker.
     private final LoadData loadData;
 
@@ -689,9 +690,13 @@ public class ModularLoadManagerImpl implements ModularLoadManager, ZooKeeperCach
                 // If the given bundle is already in preallocated, return the selected broker.
                 return Optional.of(preallocatedBundleToBroker.get(bundle));
             }
+
+//            根据 bundle 名获取 BundleData
             final BundleData data = loadData.getBundleData().computeIfAbsent(bundle,
                     key -> getBundleDataOrDefault(bundle));
+//            brokerCandidateCache 是装 broker 的容器
             brokerCandidateCache.clear();
+//            过滤 /loadbalance/brokers 的数据
             LoadManagerShared.applyNamespacePolicies(serviceUnit, policies, brokerCandidateCache, getAvailableBrokers(),
                     brokerTopicLoadingPredicate);
 
@@ -725,6 +730,7 @@ public class ModularLoadManagerImpl implements ModularLoadManager, ZooKeeperCach
                         brokerTopicLoadingPredicate);
             }
 
+//            重点是这吗
             // Choose a broker among the potentially smaller filtered list, when possible
             Optional<String> broker = placementStrategy.selectBroker(brokerCandidateCache, data, loadData, conf);
             if (log.isDebugEnabled()) {

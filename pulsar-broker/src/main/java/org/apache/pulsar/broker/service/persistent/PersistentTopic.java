@@ -1295,7 +1295,7 @@ public class PersistentTopic extends AbstractTopic implements Topic, AddEntryCal
         topicStatsHelper.reset();
 
         replicators.forEach((region, replicator) -> replicator.updateRates());
-
+//        加上 producer 数
         nsStats.producerCount += producers.size();
         bundleStats.producerCount += producers.size();
         topicStatsStream.startObject(topic);
@@ -1303,9 +1303,10 @@ public class PersistentTopic extends AbstractTopic implements Topic, AddEntryCal
         // start publisher stats
         topicStatsStream.startList("publishers");
         producers.values().forEach(producer -> {
+//            计算 producer 的消息速率
             producer.updateRates();
             PublisherStats publisherStats = producer.getStats();
-
+//            累加 producer 的统计
             topicStatsHelper.aggMsgRateIn += publisherStats.msgRateIn;
             topicStatsHelper.aggMsgThroughputIn += publisherStats.msgThroughputIn;
 

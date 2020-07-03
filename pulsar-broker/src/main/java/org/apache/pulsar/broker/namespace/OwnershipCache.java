@@ -209,7 +209,10 @@ public class OwnershipCache {
      * @return The ephemeral node data showing the current ownership info in <code>ZooKeeper</code>
      * @throws Exception
      */
+//    把当前 broker 设置为 owner
+//    own 一个 bundle 就是往 zk 上写数据
     public CompletableFuture<NamespaceEphemeralData> tryAcquiringOwnership(NamespaceBundle bundle) throws Exception {
+        // path = /namespace/pulsar/test/ns-7/0x00000000_0xffffffff
         String path = ServiceUnitZkUtils.path(bundle);
 
         CompletableFuture<NamespaceEphemeralData> future = new CompletableFuture<>();
@@ -223,6 +226,8 @@ public class OwnershipCache {
 
         // Doing a get() on the ownedBundlesCache will trigger an async ZK write to acquire the lock over the
         // service unit
+        // OwnedServiceUnitCacheLoader.asyncLoad
+        // get 触发异步写 zk ，路径就是 path，数据是当前 selfOwnerInfo 的信息
         ownedBundlesCache.get(path).thenAccept(namespaceBundle -> {
             LOG.info("Successfully acquired ownership of {}", path);
             if (namespaceService != null) {
@@ -269,8 +274,10 @@ public class OwnershipCache {
      * Method to remove the ownership of local broker on the <code>NamespaceBundle</code>, if owned
      *
      */
+//    remove 一个 bundle 就是删除 zk 的数据
     public CompletableFuture<Void> removeOwnership(NamespaceBundle bundle) {
         CompletableFuture<Void> result = new CompletableFuture<>();
+        // key = /namespace/pulsar/test/ns-7/0x00000000_0xffffffff
         String key = ServiceUnitZkUtils.path(bundle);
         localZkCache.getZooKeeper().delete(key, -1, (rc, path, ctx) -> {
             if (rc == KeeperException.Code.OK.intValue() || rc == KeeperException.Code.NONODE.intValue()) {

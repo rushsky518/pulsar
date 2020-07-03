@@ -523,6 +523,7 @@ public class Producer {
     }
 
     public void updateRates() {
+        // 计算 msgIn 的速率，并重置
         msgIn.calculateRate();
         stats.msgRateIn = msgIn.getRate();
         stats.msgThroughputIn = msgIn.getValueRate();

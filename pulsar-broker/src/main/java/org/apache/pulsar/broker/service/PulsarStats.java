@@ -180,7 +180,10 @@ public class PulsarStats implements Closeable {
                 clusterReplicationMetrics.reset();
             }
             brokerOperabilityMetrics.getMetrics()
-                    .forEach(brokerOperabilityMetric -> tempMetricsCollection.add(brokerOperabilityMetric));
+                    .forEach(
+                            brokerOperabilityMetric -> {
+                                tempMetricsCollection.add(brokerOperabilityMetric);
+                            });
 
             // json end
             topicStatsStream.endObject();

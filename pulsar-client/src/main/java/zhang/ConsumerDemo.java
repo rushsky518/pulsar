@@ -13,11 +13,14 @@
 package zhang;
 
 import java.util.concurrent.TimeUnit;
+import org.apache.pulsar.client.api.ConsumerStats;
 import org.apache.pulsar.client.api.Message;
+import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.SubscriptionInitialPosition;
 import org.apache.pulsar.client.api.SubscriptionType;
+import org.apache.pulsar.client.impl.MessageIdImpl;
 
 /**
  * ConsumerDemo
@@ -35,13 +38,18 @@ public class ConsumerDemo {
                 .subscriptionType(SubscriptionType.Exclusive)
                 .subscriptionInitialPosition(SubscriptionInitialPosition.Earliest)
                 .subscribe();
+
+        consumer.seek(MessageId.earliest);
         while (true) {
             // Wait for a message
             Message msg = consumer.receive();
-
+            ConsumerStats stats = consumer.getStats();
             try {
                 // Do something with the message
-                System.out.printf("Message received: %s%n", new String(msg.getData()));
+                System.out.printf("Message received: %s, seqid:%d, msgid:%s%n",
+                        new String(msg.getData()),
+                        msg.getSequenceId(),
+                        msg.getMessageId().toString());
 
                 // Acknowledge the message so that it can be deleted by the message broker
                 consumer.acknowledge(msg);

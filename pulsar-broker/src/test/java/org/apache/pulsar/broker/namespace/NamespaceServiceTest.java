@@ -98,18 +98,22 @@ public class NamespaceServiceTest extends BrokerTestBase {
 
     @Test
     public void testSplitAndOwnBundles() throws Exception {
-
+        // 首先 mock 一个
         OwnershipCache MockOwnershipCache = spy(pulsar.getNamespaceService().getOwnershipCache());
         doNothing().when(MockOwnershipCache).disableOwnership(any(NamespaceBundle.class));
+        // 把 MockOwnershipCache 赋给 pulsar.getNamespaceService()
         Field ownership = NamespaceService.class.getDeclaredField("ownershipCache");
         ownership.setAccessible(true);
         ownership.set(pulsar.getNamespaceService(), MockOwnershipCache);
         NamespaceService namespaceService = pulsar.getNamespaceService();
         NamespaceName nsname = NamespaceName.get("pulsar/global/ns1");
         TopicName topicName = TopicName.get("persistent://pulsar/global/ns1/topic-1");
+        // 获取 bundles
         NamespaceBundles bundles = namespaceService.getNamespaceBundleFactory().getBundles(nsname);
+        //
         NamespaceBundle originalBundle = bundles.findBundle(topicName);
 
+        // RangeEquallyDivideBundleSplitAlgorithm 把 bundle 一分为二
         // Split bundle and take ownership of split bundles
         CompletableFuture<Void> result = namespaceService.splitAndOwnBundle(originalBundle, false, NamespaceBundleSplitAlgorithm.rangeEquallyDivide);
 
@@ -436,6 +440,7 @@ public class NamespaceServiceTest extends BrokerTestBase {
 
     @Test
     public void testRemoveOwnershipAndSplitBundle() throws Exception {
+        // 首先创建一个 OwnershipCache
         OwnershipCache ownershipCache = spy(pulsar.getNamespaceService().getOwnershipCache());
         doNothing().when(ownershipCache).disableOwnership(any(NamespaceBundle.class));
 
@@ -447,8 +452,9 @@ public class NamespaceServiceTest extends BrokerTestBase {
         NamespaceName nsname = NamespaceName.get("pulsar/global/ns1");
         TopicName topicName = TopicName.get("persistent://pulsar/global/ns1/topic-1");
         NamespaceBundles bundles = namespaceService.getNamespaceBundleFactory().getBundles(nsname);
+        // 刚开始只能找到一个 FullBundle
         NamespaceBundle originalBundle = bundles.findBundle(topicName);
-
+        // FullBundle 一分为二
         CompletableFuture<Void> result1 = namespaceService.splitAndOwnBundle(originalBundle, false, NamespaceBundleSplitAlgorithm.rangeEquallyDivide);
         try {
             result1.get();
@@ -458,8 +464,9 @@ public class NamespaceServiceTest extends BrokerTestBase {
 
         NamespaceBundles updatedNsBundles = namespaceService.getNamespaceBundleFactory().getBundles(nsname);
         assertNotNull(updatedNsBundles);
+        // 此时已经有 2 个 bundle 了，topic 属于其中一个
         NamespaceBundle splittedBundle = updatedNsBundles.findBundle(topicName);
-
+        // 删除另外一个不包含 topic 的 bundle
         updatedNsBundles.getBundles().stream().filter(bundle -> !bundle.equals(splittedBundle)).forEach(bundle -> {
             try {
                 ownershipCache.removeOwnership(bundle).get();
@@ -468,6 +475,7 @@ public class NamespaceServiceTest extends BrokerTestBase {
             }
         });
 
+        // 再把 splittedBundle 一分为二
         CompletableFuture<Void> result2 = namespaceService.splitAndOwnBundle(splittedBundle, true, NamespaceBundleSplitAlgorithm.rangeEquallyDivide);
         try {
             result2.get();

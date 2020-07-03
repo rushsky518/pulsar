@@ -77,13 +77,17 @@ public class RateLimiterTest {
 
     @Test
     public void testAcquire() throws Exception {
+        // 间隔 1000ms 清空
         final long rateTimeMSec = 1000;
+        // 100 个令牌
         final int permits = 100;
         RateLimiter rate = new RateLimiter(permits, rateTimeMSec, TimeUnit.MILLISECONDS);
         long start = System.currentTimeMillis();
         for (int i = 0; i < permits; i++) {
+            // 获取令牌
             rate.acquire();
         }
+        // 没到间隔时间 rateTimeMSec，所以已发出去的令牌还没有清除
         long end = System.currentTimeMillis();
         assertTrue((end - start) < rateTimeMSec);
         assertEquals(rate.getAvailablePermits(), 0);
@@ -92,16 +96,20 @@ public class RateLimiterTest {
 
     @Test
     public void testMultipleAcquire() throws Exception {
+        // 每过 1000ms 重置令牌数
         final long rateTimeMSec = 1000;
+        // 令牌总数为 100
         final int permits = 100;
         final int acquirePermist = 50;
         RateLimiter rate = new RateLimiter(permits, rateTimeMSec, TimeUnit.MILLISECONDS);
         long start = System.currentTimeMillis();
         for (int i = 0; i < permits / acquirePermist; i++) {
+            // 1 次获取 50 个令牌，2 次申请完 100 个令牌
             rate.acquire(acquirePermist);
         }
         long end = System.currentTimeMillis();
         assertTrue((end - start) < rateTimeMSec);
+        // 时间还不到 1000ms，令牌没有重置，则可用令牌仍为 0
         assertEquals(rate.getAvailablePermits(), 0);
         rate.close();
     }
@@ -110,6 +118,7 @@ public class RateLimiterTest {
     public void testTryAcquireNoPermits() throws Exception {
         final long rateTimeMSec = 1000;
         RateLimiter rate = new RateLimiter(1, rateTimeMSec, TimeUnit.MILLISECONDS);
+        // 只有 1 个令牌，第一次获取成功，第二次获取失败
         assertTrue(rate.tryAcquire());
         assertFalse(rate.tryAcquire());
         assertEquals(rate.getAvailablePermits(), 0);
@@ -146,9 +155,11 @@ public class RateLimiterTest {
         final long rateTimeMSec = 1000;
         final int permits = 100;
         RateLimiter rate = new RateLimiter(permits, rateTimeMSec, TimeUnit.MILLISECONDS);
+        // 共有 100 个令牌，获取 100 个，剩余令牌为 0
         rate.tryAcquire(permits);
         assertEquals(rate.getAvailablePermits(), 0);
         // check after a rate-time: permits must be renewed
+        // 等待 2 倍 rateTimeMSec 时间后，令牌重置了
         Thread.sleep(rateTimeMSec * 2);
         assertEquals(rate.getAvailablePermits(), permits);
 
